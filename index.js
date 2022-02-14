@@ -1,13 +1,21 @@
+require('dotenv').config()
 const express = require('express')
 const res = require('express/lib/response')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
+const mongoose = require('mongoose')
+const Person = require('./models/person')
 
 app.use(express.json())
 app.use(morgan('tiny'))
 app.use(cors())
 app.use(express.static('build'))
+
+const url = process.env.MONGODB_URI
+//const url = 'mongodb+srv://ansku:<xie9aivi>@cluster0.wfno6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+
+mongoose.connect(url)
 
 let persons = [
     {
@@ -32,7 +40,7 @@ app.get('/', (req, res) => {
   })
   
   app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({}).then(persons => { res.json(persons)})
   })
 
   app.post('/api/persons', (request, response) => {
@@ -82,7 +90,7 @@ app.get('/', (req, res) => {
     res.send(text)
   })
   
-  const PORT = process.env.PORT || 3001
+  const PORT = process.env.PORT
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
