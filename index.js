@@ -13,7 +13,6 @@ app.use(cors())
 app.use(express.static('build'))
 
 const url = process.env.MONGODB_URI
-//const url = 'mongodb+srv://ansku:<xie9aivi>@cluster0.wfno6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 
 mongoose.connect(url)
 
@@ -55,14 +54,11 @@ app.get('/', (req, res) => {
         return response.status(400).json({ error: 'name must be unique'})
     }
 
-    const person = {
-        id: Math.floor(Math.random() * 50) + 5,
-        name: body.name,
-        number: body.number,
-    }
-
-    persons = persons.concat(person)
-    response.json(person)
+    Person.save().then(result => {
+      console.log('added ', Person.name, ' number ', Person.number, ' to phonebook')
+      //mongoose.connection.close()
+   })
+    response.json(Person)
   })
 
   app.get('/api/persons/:id', (request, response) => {
